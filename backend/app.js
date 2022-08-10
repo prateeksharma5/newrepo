@@ -1,8 +1,27 @@
 const express=require('express')
 const app= express();
-app.use(express.json())
+const cookieParser=require('cookie-parser')
+require('dotenv').config({path:'backend/config/config.env'})
+const bodyParser=require("body-parser")
+
+
+
+
+
+//using middlewares
 app.use(express.urlencoded({extended:true}))
-//const bodyparser=require("body-parser")
-const user= require("./routes/user")
+app.use(bodyParser.json())
+app.use(cookieParser())
+app.use(express.json())
+
+
+//importing routes
+const router=express.Router();
+const user=require('./routes/user')
+
+//using routes
 app.use('/api/v2',user)
-module.exports=app
+
+
+
+module.exports=app;

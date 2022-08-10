@@ -1,8 +1,11 @@
 const express=require('express');
-const{register}=require('../controller/user')
 const router=express.Router();
+const{register,loginUser}=require('../controller/user')
+
+const{isAuthenticated}=require('../middlewares/auth')
 router.route('/register').post(register)
-module.exports=router
+router.route('/login').post(loginUser)
+module.exports=router;
 
 
 
