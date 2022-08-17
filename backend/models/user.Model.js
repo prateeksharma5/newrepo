@@ -1,6 +1,5 @@
 const mongoose=require('mongoose')
 const bcrypt=require('bcrypt')
-const jwt=require('jsonwebtoken')
 const userSchema=new mongoose.Schema({
 username:{
     type:String,required:[true,'Please Enter your name']
@@ -26,6 +25,11 @@ lastname:{
 phone:{
     type:Number,
     required:[true,"Please Enter phone number"]
+},
+role:{
+    type:String,
+    enum:["superuser","user","merchent"],
+    default:"basic"
 }
 })
 userSchema.pre('save',async function(next){
@@ -37,9 +41,5 @@ next();
 
 userSchema.methods.matchPassword =async function(password){
     return await bcrypt.compare(password,this.password)
-}
-userSchema.methods.generateToken=function(){
-    return jwt.sign({_id:this._id},process.env.JWT_SECRET)
-
 }
 module.exports=mongoose.model('User',userSchema)

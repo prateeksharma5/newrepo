@@ -1,19 +1,18 @@
-const User=require('../models/User')
-const jwt=require('jsonwebtoken')
+const User=require('../models/user.Model')
+const jwt=require('./jwt')
 
 
 exports.isAuthenticated =async(req,res,next)=>{
-    try{
-    const {token}=req.cookies;
-    if(!token){
+    try{ 
+        const decoded =await jwt.verify(req,res);
+       if(!decoded){
         res.status(401).json({
             message:"Please login first"
         });
 
     }
-    const decoded =await jwt.verify(token,process.env.JWT_SECRET);
-
-    req.user=await User.findById(decoded._id)
+    console.log(decoded)
+    req.token=await User.findById(decoded.id)
     next();
 }
 catch(error){
@@ -23,7 +22,35 @@ catch(error){
 
     })
 }
+}
 
+exports.isAdmin = async(req, res,next)=>{
+    try{ 
+        const decoded =await jwt.verify(req,res);
+       if(!decoded){
+        res.status(401).json({
+            message:"Please login first"
+        });
 
+    }
+
+    req.token=await User.findById(decoded.id)
+    if(req.token.role=="admin"){
+    next();
+    }
+    else{
+        res.status(500).json({
+            success:false,
+            message:"you are unauthrized to acces this route"
     
+        })
+    }
+}
+catch(error){
+    res.status(500).json({
+        success:false,
+        message:error.message
+
+    })
+}
 }

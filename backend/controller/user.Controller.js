@@ -1,8 +1,9 @@
-const User=require('../models/User')
+const User=require('../models/user.Model')
+const jwt = require("../middlewares/jwt")
 exports.register=async(req,res)=>{
     try{
         console.log(req.body)
-        const{username,email,password,firstname,lastname,phone}=req.body;
+        const{username,email,password,firstname,lastname,phone,role}=req.body;
         let user=await User.findOne({email});
         if(user){
          return res
@@ -16,6 +17,7 @@ exports.register=async(req,res)=>{
             firstname,
             lastname,
             phone,
+            role
             
     })
     res.status(201).json({success:true,user})
@@ -26,7 +28,6 @@ exports.register=async(req,res)=>{
         })
     }
 }
-//____________________________________---
 //User login code
 exports.loginUser=async(req,res)=>{
     try{
@@ -42,27 +43,58 @@ exports.loginUser=async(req,res)=>{
                 message:"Incorrect password"
             })
         }
-        const options={expires:new Date(Date.now()+90*24*60*60*1000),
-            httpOnly:true}
-        const token= await user.generateToken();
-        res.status(201).cookie("token",token,options).json({
+        const token= await jwt.sign(user);
+
+        res.status(201).json({
             success:true,
             message:"User logged in successfully",
             user,token
         })
-
-
     }
     catch(error){
         return res.status(500).json({success:false,message:error.message})
     }
 }
-exports.logout=async(req,res)=>{
+// exports.logout=async(req,res)=>{
+//     try{
+//         res.status(200).cookie("token",null,{expires:new Date(Date.now()),httpOnly:true}).json({
+//             success:true,
+//             message:"Log Out"
+//         })
+//     }catch(error){
+//         res.status(500).json({
+//             success:false,
+//             message:error.message,
+//         })
+//     }
+// }
+
+exports.getUser = async(req,res)=>{
+    try {  
+    
+         const user = await User.findById(req.token.id)
+         if(!user){
+            res.status(403).send();
+            return;
+         }
+         return res.json(
+            {
+                data:user.email
+            }
+         )
+
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message,
+        }) 
+    }
+}
+
+exports.updateRole=async(req,res)=>{
     try{
-        res.status(200).cookie("token",null,{expires:new Date(Date.now()),httpOnly:true}).json({
-            success:true,
-            message:"Log Out"
-        })
+        user=await User.findByIdAndUpdate({'_id':req.body.id},{role:"admin"})
+        res.json({success:true,user})
     }catch(error){
         res.status(500).json({
             success:false,
