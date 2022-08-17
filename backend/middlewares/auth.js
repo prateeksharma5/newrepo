@@ -41,7 +41,7 @@ exports.isAdmin = async(req, res,next)=>{
     else{
         res.status(500).json({
             success:false,
-            message:"you are unauthrized to acces this route"
+            message:"you are unauthrized to access this route"
     
         })
     }

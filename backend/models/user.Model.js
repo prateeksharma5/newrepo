@@ -28,8 +28,8 @@ phone:{
 },
 role:{
     type:String,
-    enum:["superuser","user","merchent"],
-    default:"basic"
+    enum:["superuser","user","merchant"],
+    default:"user"
 }
 })
 userSchema.pre('save',async function(next){

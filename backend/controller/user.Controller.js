@@ -6,20 +6,9 @@ exports.register=async(req,res)=>{
         const{username,email,password,firstname,lastname,phone,role}=req.body;
         let user=await User.findOne({email});
         if(user){
-         return res
-         .status(400)
-         .json({success:false,message:'user already exists'})
+         return res.status(400).json({success:false,message:'user already exists'})
         }
-        user=await User.create({
-            username,
-            email,
-            password,
-            firstname,
-            lastname,
-            phone,
-            role
-            
-    })
+        user=await User.create({username,email,password,firstname,lastname,phone,role})
     res.status(201).json({success:true,user})
     }catch(error){
         res.status(500).json({
@@ -55,23 +44,22 @@ exports.loginUser=async(req,res)=>{
         return res.status(500).json({success:false,message:error.message})
     }
 }
-// exports.logout=async(req,res)=>{
-//     try{
-//         res.status(200).cookie("token",null,{expires:new Date(Date.now()),httpOnly:true}).json({
-//             success:true,
-//             message:"Log Out"
-//         })
-//     }catch(error){
-//         res.status(500).json({
-//             success:false,
-//             message:error.message,
-//         })
-//     }
-// }
+exports.logout=async(req,res)=>{
+    try{
+        res.status(200).cookie("token",null,{expires:new Date(Date.now()),httpOnly:true}).json({
+            success:true,
+            message:"Log Out"
+        })
+    }catch(error){
+        res.status(500).json({
+            success:false,
+            message:error.message,
+        })
+    }
+}
 
 exports.getUser = async(req,res)=>{
-    try {  
-    
+    try { 
          const user = await User.findById(req.token.id)
          if(!user){
             res.status(403).send();
@@ -93,7 +81,7 @@ exports.getUser = async(req,res)=>{
 
 exports.updateRole=async(req,res)=>{
     try{
-        user=await User.findByIdAndUpdate({'_id':req.body.id},{role:"admin"})
+        user=await User.findOneAndUpdate({'email':req.body.email},{role:req.body.role})
         res.json({success:true,user})
     }catch(error){
         res.status(500).json({

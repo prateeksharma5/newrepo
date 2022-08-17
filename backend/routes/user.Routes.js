@@ -5,8 +5,8 @@ const{isAuthenticated,isAdmin}=require('../middlewares/auth')
 const router=express.Router();
 router.route('/register').post(register)
 router.route('/login').post(loginUser)
-router.route('/update').put(updateRole)
-router.route("/getUser").get(isAuthenticated,isAdmin,getUser)
+router.route('/updateRole').put(updateRole)
+router.route("/loginAdmin").post(isAuthenticated,isAdmin,getUser)
 module.exports=router;
 
 
