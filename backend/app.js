@@ -14,7 +14,6 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(express.json())
 
-
 //importing routes
 const router=express.Router();
 const user=require('./routes/user.Routes')

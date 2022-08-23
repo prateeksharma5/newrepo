@@ -36,3 +36,4 @@ exports.verify = function (req, res, secret = null) {
 exports.decode = function (token) {
   return jwt.decode(token, { complete: true });
 };
+
